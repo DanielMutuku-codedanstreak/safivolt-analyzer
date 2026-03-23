@@ -12,3 +12,4 @@ charts/
 # User-provided data
 # Note: Remove the line below if you want to commit your sample CSV files.
 sample_data/
+output-report/

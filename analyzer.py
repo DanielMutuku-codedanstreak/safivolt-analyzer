@@ -46,7 +46,7 @@ from pdf_generator import (
 )
 
 # --- Configuration ---
-OUTPUT_DIR = '.'
+OUTPUT_DIR = 'output-report'
 CHART_DIR = os.path.join(OUTPUT_DIR, 'charts')
 FAST_CHARGING_THRESHOLD = 20 # kWh
 
