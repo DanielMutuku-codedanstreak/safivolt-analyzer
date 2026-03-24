@@ -119,13 +119,14 @@ def create_table_flowable(df, col_widths=None):
     data = [df.columns.tolist()] + df.values.tolist()
     
     table_style = TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#EFE6D4')), # Cream/Birch white header
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#dbe4ee')),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
         ('FONTSIZE', (0, 0), (-1, 0), 10),
         ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
         ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.HexColor('#f2f2f2')),
         ('GRID', (0, 0), (-1, -1), 1, colors.black)
     ])
     
@@ -335,30 +336,14 @@ def generate_pdf_report(output_filename, report_data, chart_paths):
     if rankings.get('top_kwh_chargers') or rankings.get('bottom_uptime_chargers'):
         if rankings.get('top_kwh_chargers'):
             story.append(create_chapter_title("Top Chargers by Energy Delivered (kWh)", level=2))
-            top_kwh_data = [['Serial Number', 'Total Energy (kWh)']] + rankings['top_kwh_chargers']
-            story.append(Table(top_kwh_data, style=TableStyle([
-                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#ADD8E6')),
-                ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
-                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-                ('GRID', (0, 0), (-1, -1), 1, colors.black)
-            ])))
+            top_kwh_df = pd.DataFrame(rankings['top_kwh_chargers'], columns=['Serial Number', 'Total Energy (kWh)'])
+            story.append(create_table_flowable(top_kwh_df))
             story.append(Spacer(1, 0.1 * inch))
 
         if rankings.get('bottom_uptime_chargers'):
             story.append(create_chapter_title("Chargers with Lowest Uptime (%)", level=2))
-            bottom_uptime_data = [['Serial Number', 'Average Uptime (%)']] + rankings['bottom_uptime_chargers']
-            story.append(Table(bottom_uptime_data, style=TableStyle([
-                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#ADD8E6')),
-                ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
-                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-                ('GRID', (0, 0), (-1, -1), 1, colors.black)
-            ])))
+            bottom_uptime_df = pd.DataFrame(rankings['bottom_uptime_chargers'], columns=['Serial Number', 'Average Uptime (%)'])
+            story.append(create_table_flowable(bottom_uptime_df))
             story.append(Spacer(1, 0.1 * inch))
     else:
         story.append(create_chapter_body("No charger rankings available for this period."))
