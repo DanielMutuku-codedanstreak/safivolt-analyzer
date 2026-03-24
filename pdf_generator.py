@@ -24,13 +24,73 @@ styleL = styles['Bullet']
 
 def _header_footer(canvas, doc):
     canvas.saveState()
-    # Header
-    canvas.setFont('Helvetica-Bold', 10)
-    canvas.drawString(MARGIN_LEFT, PAGE_HEIGHT - MARGIN_TOP + 5*mm, "Charger Performance Report")
+    
+    # Draw header background rectangle
+    canvas.setFillColor(colors.HexColor('#EFE6D4'))
+    canvas.rect(0, PAGE_HEIGHT - MARGIN_TOP, PAGE_WIDTH, MARGIN_TOP, stroke=0, fill=1) # x, y, width, height
+
+    # Header Logo and Text
+    logo_path = os.path.join(os.path.dirname(__file__), 'icons', 'safivolt-bolt.png')
+    if os.path.exists(logo_path):
+        canvas.drawImage(logo_path, MARGIN_LEFT - 8*mm, PAGE_HEIGHT - MARGIN_TOP + 2*mm, width=20*mm, height=10*mm, preserveAspectRatio=True, mask='auto')
+
+    # Draw 'afi' in bold and 'volt' in regular
+    canvas.setFillColor(colors.black) # Explicitly set color to black
+    
+    # Calculate starting x-coordinate for 'afi' to be close to the logo
+    logo_end_x = MARGIN_LEFT + 20*mm
+    afi_start_x = logo_end_x - 16*mm
+
+    # Set font for 'afi'
+    canvas.setFont('Helvetica-Bold', 14)
+    canvas.drawString(afi_start_x, PAGE_HEIGHT - MARGIN_TOP + 5*mm, "afi")
+
+    # Calculate starting x-coordinate for 'volt' to immediately follow 'afi'
+    afi_width = canvas.stringWidth("afi", 'Helvetica-Bold', 14)
+    volt_start_x = afi_start_x + afi_width
+
+    # Set font for 'volt'
+    canvas.setFont('Helvetica', 14)
+    canvas.drawString(volt_start_x, PAGE_HEIGHT - MARGIN_TOP + 5*mm, "volt")
+    
     canvas.setFont('Helvetica', 9)
-    canvas.drawRightString(PAGE_WIDTH - MARGIN_RIGHT, PAGE_HEIGHT - MARGIN_TOP + 5*mm, f"Date: {getattr(doc, 'report_date', 'N/A')}")
-    canvas.setFont('Helvetica', 9)
-    canvas.drawCentredString(PAGE_WIDTH / 2.0, MARGIN_BOTTOM - 5*mm, f"Page {doc.page}")
+
+    
+    # Footer Icons and Text
+    canvas.setFont('Helvetica', 8)
+    
+    # Safivolt Anchor
+    anchor_icon_path = os.path.join(os.path.dirname(__file__), 'icons', 'safivolt-archor.png')
+    if os.path.exists(anchor_icon_path):
+        canvas.drawImage(anchor_icon_path, MARGIN_LEFT, MARGIN_BOTTOM - 8*mm, width=4*mm, height=12*mm, preserveAspectRatio=True, mask='auto')
+
+    # Phone
+    phone_icon_path = os.path.join(os.path.dirname(__file__), 'icons', 'phone.png')
+    if os.path.exists(phone_icon_path):
+        canvas.drawImage(phone_icon_path, MARGIN_LEFT + 15*mm, MARGIN_BOTTOM - 6*mm, width=3*mm, height=3*mm, preserveAspectRatio=True, mask='auto')
+    canvas.drawString(MARGIN_LEFT + 19*mm, MARGIN_BOTTOM - 5*mm, "+2547 402 23196")
+    
+    # Website
+    web_icon_path = os.path.join(os.path.dirname(__file__), 'icons', 'web.png')
+    if os.path.exists(web_icon_path):
+        canvas.drawImage(web_icon_path, PAGE_WIDTH / 2.0 - 17*mm, MARGIN_BOTTOM - 6*mm, width=4*mm, height=4*mm, preserveAspectRatio=True, mask='auto')
+    canvas.drawCentredString(PAGE_WIDTH / 2.0, MARGIN_BOTTOM - 5*mm, "www.safivolt.africa")
+    
+    # Address
+    location_icon_path = os.path.join(os.path.dirname(__file__), 'icons', 'location.png')
+    address_line_1 = "Unit 3, 10th Floor, Tower 1, The Mirage"
+    address_line_2 = "Waiyaki Way, Westlands, Nairobi"
+    
+    # Calculate width of the longest address line to position the icon correctly
+    address_width = max(canvas.stringWidth(address_line_1, 'Helvetica', 8), canvas.stringWidth(address_line_2, 'Helvetica', 8))
+    icon_x_pos = PAGE_WIDTH - MARGIN_RIGHT - address_width - 5*mm  # 5mm space between icon and text
+
+    if os.path.exists(location_icon_path):
+        canvas.drawImage(location_icon_path, icon_x_pos, MARGIN_BOTTOM - 6*mm, width=4*mm, height=4*mm, preserveAspectRatio=True, mask='auto')
+    
+    canvas.drawRightString(PAGE_WIDTH - MARGIN_RIGHT, MARGIN_BOTTOM - 5*mm, address_line_1)
+    canvas.drawRightString(PAGE_WIDTH - MARGIN_RIGHT, MARGIN_BOTTOM - 8*mm, address_line_2)
+    
     canvas.restoreState()
 
 def create_title_page(story, report_date):
@@ -59,13 +119,13 @@ def create_table_flowable(df, col_widths=None):
     data = [df.columns.tolist()] + df.values.tolist()
     
     table_style = TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#ADD8E6')), # Light Blue header
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#EFE6D4')), # Cream/Birch white header
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
         ('FONTSIZE', (0, 0), (-1, 0), 10),
         ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.white),
         ('GRID', (0, 0), (-1, -1), 1, colors.black)
     ])
     
